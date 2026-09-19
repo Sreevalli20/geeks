@@ -1,0 +1,46 @@
+# SkillProof Render Deployment Configuration
+# This configuration supports both frontend and backend deployment on Render
+
+services:
+  # Backend API Service
+  - type: web
+    name: skillproof-api
+    runtime: node
+    plan: free
+    buildCommand: cd server && npm install && npm run build
+    startCommand: cd server && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: DATABASE_URL
+        fromDatabase:
+          name: skillproof-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: https://skillproof-eta.vercel.app
+      - key: GITHUB_TOKEN
+        sync: false
+
+  # Frontend Service (optional - can also use Vercel)
+  - type: web
+    name: skillproof-frontend
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build:frontend
+    startCommand: npm run preview
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: VITE_API_URL
+        value: https://skillproof-api.onrender.com
+
+databases:
+  # PostgreSQL Database
+  - name: skillproof-db
+    databaseName: skillproof
+    user: skillproof_user
+    plan: free

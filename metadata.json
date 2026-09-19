@@ -1,0 +1,6 @@
+{
+  "name": "SkillProof",
+  "description": "AI-powered evidence-based hiring platform. Don't hire the resume. Hire the proof.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
