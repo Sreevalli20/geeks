@@ -8,7 +8,6 @@ import {
   Download,
   ArrowRight,
   RefreshCw,
-  Sparkles,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { parseJsonImport, parseCsvImport, ImportPreviewResult } from '../services/imports';
@@ -73,39 +72,6 @@ export const ImportCenterPage: React.FC = () => {
     }
   };
 
-  /**
-   * One-click Sample Candidate JSON loader
-   */
-  const handleLoadSampleJson = () => {
-    const sample = [
-      {
-        name: 'Jordan Rivera',
-        detectedRole: 'Staff Infrastructure & Kubernetes Architect',
-        email: 'jordan.rivera@example.io',
-        summary: 'Specialized in multi-cloud Kubernetes clusters, Terraform automation, and Istio service mesh.',
-        keySkills: ['Kubernetes', 'Go', 'Terraform', 'Docker', 'AWS', 'Istio'],
-        claims: [
-          {
-            title: 'Kubernetes Cluster Fleet Management',
-            description: 'Maintained 40+ EKS clusters spanning 3 AWS regions with 99.99% uptime SLA.',
-            claimType: 'Technical Skill',
-            evidenceStatus: 'Supported',
-          },
-          {
-            title: 'Zero-Downtime Migration',
-            description: 'Migrated 300 microservices from legacy ECS to EKS with zero customer disruption.',
-            claimType: 'Project Achievement',
-            evidenceStatus: 'Partially Supported',
-          },
-        ],
-      },
-    ];
-
-    const res = parseJsonImport(JSON.stringify(sample));
-    setImportResult(res);
-    setSelectedIndices(res.records.map((_: any, idx: number) => idx));
-  };
-
   return (
     <div id="import-center-view" className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6">
       {/* Header */}
@@ -123,14 +89,6 @@ export const ImportCenterPage: React.FC = () => {
             Ingest structured candidate profiles, skill claims, and technical records in bulk
           </p>
         </div>
-
-        <button
-          onClick={handleLoadSampleJson}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-900 text-xs font-semibold transition-colors shadow-2xs"
-        >
-          <Sparkles className="w-4 h-4 text-indigo-600" />
-          <span>Load Sample JSON Template</span>
-        </button>
       </div>
 
       {/* Success Notification */}

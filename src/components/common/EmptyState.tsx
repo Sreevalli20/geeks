@@ -1,19 +1,17 @@
 import React from 'react';
-import { UploadCloud, FileText, Database, ArrowRight } from 'lucide-react';
+import { UploadCloud, FileText, ArrowRight } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 interface EmptyStateProps {
   title?: string;
   description?: string;
-  showDevReset?: boolean;
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({
   title = 'NO CANDIDATE DATA YET',
   description = "Upload a resume to automatically build the candidate's explainable Proof Profile without manual data entry.",
-  showDevReset = true,
 }) => {
-  const { navigateTo, resetToDevelopmentData } = useApp();
+  const { navigateTo } = useApp();
 
   return (
     <div
@@ -41,17 +39,6 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           Upload Resume
           <ArrowRight className="w-4 h-4" />
         </button>
-
-        {showDevReset && (
-          <button
-            id="btn-empty-load-dev-sample"
-            onClick={resetToDevelopmentData}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-medium transition-colors"
-          >
-            <Database className="w-4 h-4 text-slate-500" />
-            Load Sample (Development Data)
-          </button>
-        )}
       </div>
 
       <div className="mt-8 pt-6 border-t border-slate-100 w-full flex items-center justify-center gap-6 text-xs text-slate-500">

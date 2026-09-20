@@ -13,7 +13,6 @@ import {
   FileSpreadsheet,
   ArrowRight,
   ShieldCheck,
-  Sparkles,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { StatusBadge } from '../components/common/StatusBadge';
@@ -77,51 +76,6 @@ export const UploadCenterPage: React.FC = () => {
     handleFiles(e.dataTransfer.files);
   };
 
-  /**
-   * One-click Sample Real Resume Injector
-   * Creates real browser File objects using Blob to demonstrate the end-to-end zero-manual-data extraction
-   */
-  const handleLoadSampleResume = async () => {
-    const sampleResumeText = `Maya Lin
-San Francisco, CA | maya.lin.eng@example.com | (415) 555-0182
-GitHub: github.com/mayalin-dev | Portfolio: mayalin.dev | LinkedIn: linkedin.com/in/mayalin-eng
-
-SUMMARY
-Senior Backend & Distributed Systems Engineer with 7 years experience architecting high-throughput microservices in Go, Python, and Rust. Specialized in Kafka event streaming, PostgreSQL performance tuning, and Kubernetes orchestration.
-
-TECHNICAL SKILLS
-Languages: Go, Python, Rust, TypeScript, SQL
-Frameworks: FastAPI, Gin, React, Next.js
-Databases: PostgreSQL, Redis, MongoDB, Elasticsearch
-Cloud & DevOps: Kubernetes, Docker, AWS (EKS, RDS, S3), Terraform, CI/CD
-Architecture: Microservices, Distributed Systems, Event-Driven Architecture, REST API, GraphQL
-
-EXPERIENCE
-Staff Backend Engineer | HyperScale Data | 2022 - Present
-- Designed distributed ingestion pipeline processing 80,000 events/second using Go and Kafka.
-- Re-architected PostgreSQL partitioned databases, decreasing query latency by 45%.
-- Implemented zero-downtime Kubernetes deployments with automated canary analysis.
-
-Senior Software Engineer | VectorStream Labs | 2019 - 2022
-- Built FastAPI microservices in Python with Redis caching, serving 12M monthly active requests.
-- Created real-time telemetry dashboard in React and TypeScript.
-
-EDUCATION
-B.S. in Computer Science | Stanford University | 2019
-`;
-
-    const sampleFile = new File([sampleResumeText], 'Maya_Lin_Senior_Backend_Resume.txt', {
-      type: 'text/plain',
-    });
-
-    try {
-      const newCandId = await uploadResumeFile(sampleFile);
-      setRecentUploadedCandidateId(newCandId);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
   return (
     <div id="upload-center-view" className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6">
       {/* Header */}
@@ -139,17 +93,6 @@ B.S. in Computer Science | Stanford University | 2019
             Real browser file processing • PDF, DOCX, TXT, PNG, JPG, ZIP, JSON, CSV
           </p>
         </div>
-
-        {/* Quick Sample Button */}
-        <button
-          id="btn-load-sample-resume"
-          onClick={handleLoadSampleResume}
-          disabled={isProcessingUpload}
-          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-900 text-xs font-semibold transition-colors shadow-2xs"
-        >
-          <Sparkles className="w-4 h-4 text-emerald-600" />
-          <span>Ingest Real Sample Resume (Maya Lin)</span>
-        </button>
       </div>
 
       {/* Mode Selector */}

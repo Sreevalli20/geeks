@@ -116,30 +116,6 @@ export const OverviewPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Development Data Notice if preview candidate active */}
-      {activeCandidate?.isDevelopmentData && (
-        <div className="p-3.5 rounded-lg border border-amber-200 bg-amber-50/70 flex items-start justify-between gap-3 text-xs">
-          <div className="flex items-start gap-2.5">
-            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-            <div>
-              <span className="font-bold text-amber-900 uppercase tracking-wide mr-2">
-                DEVELOPMENT DATA:
-              </span>
-              <span className="text-amber-800">
-                You are previewing sample candidate <strong>{activeCandidate.name}</strong> to inspect proof mechanics.
-                Uploaded resumes immediately replace or augment this dataset.
-              </span>
-            </div>
-          </div>
-          <button
-            onClick={() => navigateTo('upload-center')}
-            className="text-amber-900 font-semibold underline shrink-0 hover:text-amber-950"
-          >
-            Upload Real Resume →
-          </button>
-        </div>
-      )}
-
       {/* Application-Derived Metrics Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
         <div className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-2xs">

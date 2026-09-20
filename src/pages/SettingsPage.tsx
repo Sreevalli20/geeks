@@ -3,7 +3,6 @@ import {
   Settings,
   Database,
   Trash2,
-  RefreshCw,
   Server,
   ShieldCheck,
   CheckCircle2,
@@ -17,18 +16,11 @@ export const SettingsPage: React.FC = () => {
     claims,
     skills,
     evidence,
-    resetToDevelopmentData,
     clearAllData,
   } = useApp();
 
   const [confirmClear, setConfirmClear] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
-
-  const handleResetSample = () => {
-    resetToDevelopmentData();
-    setSuccessMsg('Application state restored to Development Data sample (Alex Chen).');
-    setTimeout(() => setSuccessMsg(null), 3000);
-  };
 
   const handleClearAll = () => {
     clearAllData();
@@ -115,22 +107,6 @@ export const SettingsPage: React.FC = () => {
         <div className="flex items-center gap-2">
           <Database className="w-4 h-4 text-slate-700" />
           <h3 className="text-sm font-bold text-slate-900">Application State Management</h3>
-        </div>
-
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 rounded-lg border border-slate-200 bg-slate-50">
-          <div>
-            <h4 className="text-xs font-bold text-slate-900">Reset to Development Data</h4>
-            <p className="text-[11px] text-slate-500">
-              Restore the reference sample candidate (Alex Chen) with linked repositories and proof items.
-            </p>
-          </div>
-          <button
-            onClick={handleResetSample}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold shrink-0"
-          >
-            <RefreshCw className="w-3.5 h-3.5" />
-            <span>Reset Sample Data</span>
-          </button>
         </div>
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 rounded-lg border border-rose-200 bg-rose-50/50">

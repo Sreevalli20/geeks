@@ -9,3 +9,6 @@ coverage/
 server/node_modules/
 server/dist/
 server/*.log
+
+.vercel
+.env*

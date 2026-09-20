@@ -16,20 +16,6 @@ import {
   UploadedFileItem,
   Report,
 } from '../types';
-import {
-  DEV_CANDIDATE,
-  DEV_CLAIMS,
-  DEV_SKILLS,
-  DEV_PROJECTS,
-  DEV_EXPERIENCES,
-  DEV_CERTIFICATES,
-  DEV_EVIDENCE,
-  DEV_RELATIONSHIPS,
-  DEV_PRACTICAL_CHALLENGES,
-  DEV_SUBMISSIONS,
-  DEV_ASSESSMENTS,
-  DEV_TIMELINE,
-} from '../data/developmentData';
 import { extractFromResumeText, readFileAsText, readFileAsDataURL, detectCategoryFromFilename, uploadResumeToBackend, uploadEvidenceToBackend } from '../services/uploads';
 import { candidatesService } from '../services/candidates';
 import { claimsService } from '../services/claims';
@@ -100,7 +86,6 @@ interface AppContextType {
   importRecords: (records: any[]) => number;
   removeEvidence: (id: string) => void;
   deleteCandidate: (id: string) => void;
-  resetToDevelopmentData: () => void;
   clearAllCandidates: () => void;
   clearAllData: () => void;
   // Search & Preview modals
@@ -470,23 +455,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     navigateTo('candidates');
   };
 
-  const resetToDevelopmentData = () => {
-    // Only for development - load dev data
-    setCandidates([DEV_CANDIDATE]);
-    setActiveCandidateId(DEV_CANDIDATE.id);
-    setClaims(DEV_CLAIMS);
-    setSkills(DEV_SKILLS);
-    setProjects(DEV_PROJECTS);
-    setExperiences(DEV_EXPERIENCES);
-    setCertificates(DEV_CERTIFICATES);
-    setEvidence(DEV_EVIDENCE);
-    setRelationships(DEV_RELATIONSHIPS);
-    setSubmissions(DEV_SUBMISSIONS);
-    setAssessments(DEV_ASSESSMENTS);
-    setTimeline(DEV_TIMELINE);
-    setUploadedQueue([]);
-  };
-
   const clearAllCandidates = () => {
     setCandidates([]);
     setActiveCandidateId('');
@@ -609,7 +577,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         importRecords,
         removeEvidence,
         deleteCandidate,
-        resetToDevelopmentData,
         clearAllCandidates,
         clearAllData: clearAllCandidates,
         searchQuery,
