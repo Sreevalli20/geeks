@@ -2,29 +2,25 @@
 # This configuration supports both frontend and backend deployment on Render
 
 services:
-  # Backend API Service
+  # Backend API Service (Python FastAPI)
   - type: web
     name: skillproof-api
-    runtime: node
+    runtime: python
     plan: free
-    buildCommand: npm install && npm run build
-    startCommand: cd server && npm start
+    buildCommand: cd backend && pip install -r requirements.txt
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
-      - key: NODE_ENV
-        value: production
-      - key: PORT
-        value: 3001
       - key: DATABASE_URL
         fromDatabase:
           name: skillproof-db
           property: connectionString
       - key: JWT_SECRET
         generateValue: true
-      - key: GEMINI_API_KEY
-        sync: false
       - key: FRONTEND_URL
         value: https://skillproof-eta.vercel.app
       - key: GITHUB_TOKEN
+        sync: false
+      - key: GEMINI_API_KEY
         sync: false
 
   # Frontend Service (optional - can also use Vercel)

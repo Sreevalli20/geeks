@@ -4,17 +4,15 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:server\"",
+    "dev": "npm run dev:frontend",
     "dev:frontend": "vite --port=3000 --host=0.0.0.0",
-    "dev:server": "cd server && npm run dev",
-    "build": "npm run build:frontend && npm run build:server",
+    "dev:backend": "cd backend && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload",
+    "build": "npm run build:frontend",
     "build:frontend": "vite build",
-    "build:server": "cd server && npm install && npm run build",
-    "start": "cd server && npm start",
+    "start": "npm run preview",
     "preview": "vite preview",
-    "clean": "rm -rf dist server/server.js",
-    "lint": "tsc --noEmit",
-    "migrate": "cd server && npm run migrate"
+    "clean": "rm -rf dist",
+    "lint": "tsc --noEmit"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
