@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Response, NextFunction } from 'express';
 import { query } from '../database/index.js';
 import { authenticate, AuthRequest } from '../middleware/auth.js';
 import { ValidationError } from '../middleware/errorHandler.js';
@@ -6,7 +6,7 @@ import { ValidationError } from '../middleware/errorHandler.js';
 const router = Router();
 
 // Get claims for a candidate
-router.get('/candidate/:candidateId', authenticate, async (req: AuthRequest, res, next) => {
+router.get('/candidate/:candidateId', authenticate, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { candidateId } = req.params;
     const result = await query(
@@ -24,7 +24,7 @@ router.get('/candidate/:candidateId', authenticate, async (req: AuthRequest, res
 });
 
 // Get single claim
-router.get('/:id', authenticate, async (req: AuthRequest, res, next) => {
+router.get('/:id', authenticate, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const result = await query('SELECT * FROM claims WHERE id = $1', [id]);
@@ -43,7 +43,7 @@ router.get('/:id', authenticate, async (req: AuthRequest, res, next) => {
 });
 
 // Create claim
-router.post('/', authenticate, async (req: AuthRequest, res, next) => {
+router.post('/', authenticate, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const {
       candidate_id,
@@ -75,7 +75,7 @@ router.post('/', authenticate, async (req: AuthRequest, res, next) => {
 });
 
 // Update claim
-router.put('/:id', authenticate, async (req: AuthRequest, res, next) => {
+router.put('/:id', authenticate, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const {

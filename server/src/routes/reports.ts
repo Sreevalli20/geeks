@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Response, NextFunction } from 'express';
 import { query } from '../database/index.js';
 import { authenticate, AuthRequest } from '../middleware/auth.js';
 import { ValidationError } from '../middleware/errorHandler.js';
@@ -6,7 +6,7 @@ import { ValidationError } from '../middleware/errorHandler.js';
 const router = Router();
 
 // Generate candidate evidence report
-router.post('/candidate/:candidateId', authenticate, async (req: AuthRequest, res, next) => {
+router.post('/candidate/:candidateId', authenticate, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { candidateId } = req.params;
 
@@ -110,7 +110,7 @@ router.post('/candidate/:candidateId', authenticate, async (req: AuthRequest, re
 });
 
 // Get report by ID
-router.get('/:id', authenticate, async (req: AuthRequest, res, next) => {
+router.get('/:id', authenticate, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const result = await query('SELECT * FROM reports WHERE id = $1', [id]);

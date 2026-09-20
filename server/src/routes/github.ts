@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Response, NextFunction } from 'express';
 import { Octokit } from 'octokit';
 import { query } from '../database/index.js';
 import { authenticate, AuthRequest } from '../middleware/auth.js';
@@ -24,7 +24,7 @@ function parseGitHubUrl(url: string): { owner: string; repo: string } | null {
 }
 
 // Analyze GitHub repository
-router.post('/analyze', authenticate, async (req: AuthRequest, res, next) => {
+router.post('/analyze', authenticate, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { url, candidate_id } = req.body;
 
@@ -138,7 +138,7 @@ router.post('/analyze', authenticate, async (req: AuthRequest, res, next) => {
 });
 
 // Validate GitHub URL format
-router.post('/validate', authenticate, async (req: AuthRequest, res, next) => {
+router.post('/validate', authenticate, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { url } = req.body;
 

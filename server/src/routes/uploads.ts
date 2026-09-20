@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Response, NextFunction } from 'express';
 import multer from 'multer';
 import { query } from '../database/index.js';
 import { authenticate, AuthRequest } from '../middleware/auth.js';
@@ -15,7 +15,7 @@ const upload = multer({
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB limit
   },
-  fileFilter: (req, file, cb) => {
+  fileFilter: (req: Express.Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
     const allowedTypes = [
       'application/pdf',
       'application/msword',
@@ -38,7 +38,7 @@ const upload = multer({
 });
 
 // Upload resume and create candidate
-router.post('/resume', authenticate, upload.single('file'), async (req: AuthRequest, res, next) => {
+router.post('/resume', authenticate, upload.single('file'), async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     if (!req.file) {
       throw new ValidationError('No file uploaded');
@@ -109,7 +109,7 @@ router.post('/resume', authenticate, upload.single('file'), async (req: AuthRequ
 });
 
 // Upload supporting evidence
-router.post('/evidence', authenticate, upload.array('files', 10), async (req: AuthRequest, res, next) => {
+router.post('/evidence', authenticate, upload.array('files', 10), async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     if (!req.files || req.files.length === 0) {
       throw new ValidationError('No files uploaded');

@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Response, NextFunction, Request } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { query } from '../database/index.js';
@@ -8,7 +8,7 @@ import { authenticate, AuthRequest } from '../middleware/auth.js';
 const router = Router();
 
 // Register new user
-router.post('/register', async (req, res, next) => {
+router.post('/register', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password, role = 'RECRUITER' } = req.body;
 
@@ -57,7 +57,7 @@ router.post('/register', async (req, res, next) => {
 });
 
 // Login
-router.post('/login', async (req, res, next) => {
+router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
 
@@ -99,7 +99,7 @@ router.post('/login', async (req, res, next) => {
 });
 
 // Get current user
-router.get('/me', authenticate, async (req: AuthRequest, res, next) => {
+router.get('/me', authenticate, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const result = await query(
       'SELECT id, email, role, created_at FROM users WHERE id = $1',

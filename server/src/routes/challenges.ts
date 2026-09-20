@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Response, NextFunction } from 'express';
 import { query } from '../database/index.js';
 import { authenticate, AuthRequest } from '../middleware/auth.js';
 import { ValidationError } from '../middleware/errorHandler.js';
@@ -6,7 +6,7 @@ import { ValidationError } from '../middleware/errorHandler.js';
 const router = Router();
 
 // Get all challenges
-router.get('/', authenticate, async (req: AuthRequest, res, next) => {
+router.get('/', authenticate, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const result = await query('SELECT * FROM practical_challenges ORDER BY created_at DESC');
 
@@ -20,7 +20,7 @@ router.get('/', authenticate, async (req: AuthRequest, res, next) => {
 });
 
 // Get single challenge
-router.get('/:id', authenticate, async (req: AuthRequest, res, next) => {
+router.get('/:id', authenticate, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const result = await query('SELECT * FROM practical_challenges WHERE id = $1', [id]);
@@ -39,7 +39,7 @@ router.get('/:id', authenticate, async (req: AuthRequest, res, next) => {
 });
 
 // Submit challenge solution
-router.post('/submit', authenticate, async (req: AuthRequest, res, next) => {
+router.post('/submit', authenticate, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const {
       challenge_id,
@@ -170,7 +170,7 @@ router.post('/submit', authenticate, async (req: AuthRequest, res, next) => {
 });
 
 // Get submissions for a candidate
-router.get('/submissions/:candidateId', authenticate, async (req: AuthRequest, res, next) => {
+router.get('/submissions/:candidateId', authenticate, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { candidateId } = req.params;
     const result = await query(

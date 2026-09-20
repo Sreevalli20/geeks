@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Response, NextFunction } from 'express';
 import { query } from '../database/index.js';
 import { authenticate, AuthRequest, requireRole } from '../middleware/auth.js';
 import { ValidationError } from '../middleware/errorHandler.js';
@@ -6,7 +6,7 @@ import { ValidationError } from '../middleware/errorHandler.js';
 const router = Router();
 
 // Get all candidates
-router.get('/', authenticate, async (req: AuthRequest, res, next) => {
+router.get('/', authenticate, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const result = await query(
       'SELECT * FROM candidates ORDER BY created_at DESC'
@@ -22,7 +22,7 @@ router.get('/', authenticate, async (req: AuthRequest, res, next) => {
 });
 
 // Get single candidate
-router.get('/:id', authenticate, async (req: AuthRequest, res, next) => {
+router.get('/:id', authenticate, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const result = await query('SELECT * FROM candidates WHERE id = $1', [id]);
@@ -41,7 +41,7 @@ router.get('/:id', authenticate, async (req: AuthRequest, res, next) => {
 });
 
 // Create candidate
-router.post('/', authenticate, requireRole(['RECRUITER', 'ADMIN']), async (req: AuthRequest, res, next) => {
+router.post('/', authenticate, requireRole(['RECRUITER', 'ADMIN']), async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const {
       name,
@@ -87,7 +87,7 @@ router.post('/', authenticate, requireRole(['RECRUITER', 'ADMIN']), async (req: 
 });
 
 // Update candidate
-router.put('/:id', authenticate, requireRole(['RECRUITER', 'ADMIN']), async (req: AuthRequest, res, next) => {
+router.put('/:id', authenticate, requireRole(['RECRUITER', 'ADMIN']), async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const {
@@ -145,7 +145,7 @@ router.put('/:id', authenticate, requireRole(['RECRUITER', 'ADMIN']), async (req
 });
 
 // Delete candidate
-router.delete('/:id', authenticate, requireRole(['RECRUITER', 'ADMIN']), async (req: AuthRequest, res, next) => {
+router.delete('/:id', authenticate, requireRole(['RECRUITER', 'ADMIN']), async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const result = await query('DELETE FROM candidates WHERE id = $1 RETURNING id', [id]);
