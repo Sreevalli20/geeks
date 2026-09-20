@@ -1,9 +1,10 @@
 /**
  * Production API Client
  * Connects to the SkillProof backend server for all data operations
+ * Updated: Production deployment with VITE_API_URL environment variable
  */
 
-const API_BASE_URL = (import.meta.env.VITE_API_URL as string) || 'https://geeks2.onrender.com';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://geeks2.onrender.com';
 
 export interface ApiResponse<T> {
   data: T;
@@ -55,9 +56,15 @@ export const apiClient = {
         handleAuthError();
         throw new Error('Authentication expired. Please login again.');
       }
+      if (res.status === 404) {
+        throw new Error('Resource not found. Please check the endpoint.');
+      }
+      if (res.status >= 500) {
+        throw new Error('Server error. Please try again later.');
+      }
       const error = await res.json().catch(() => ({ error: 'Request failed' }));
-      const errorMessage = error.error || error.message || `HTTP ${res.status}: ${res.statusText}`;
-      throw new Error(`${errorMessage} (URL: ${API_BASE_URL}${endpoint})`);
+      const errorMessage = error.error || error.message || error.detail || `HTTP ${res.status}: ${res.statusText}`;
+      throw new Error(errorMessage);
     }
 
     return res.json();
@@ -73,23 +80,51 @@ export const apiClient = {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(body),
-    });
+    const url = `${API_BASE_URL}${endpoint}`;
+    console.log(`POST ${url}`, body);
 
-    if (!res.ok) {
-      if (res.status === 401) {
-        handleAuthError();
-        throw new Error('Authentication expired. Please login again.');
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+      });
+
+      console.log(`Response status: ${res.status} ${res.statusText}`);
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          handleAuthError();
+          throw new Error('Authentication expired. Please login again.');
+        }
+        if (res.status === 404) {
+          throw new Error('Resource not found. Please check the endpoint.');
+        }
+        if (res.status >= 500) {
+          throw new Error('Server error. Please try again later.');
+        }
+        
+        let error;
+        try {
+          error = await res.json();
+          console.log('Error response:', error);
+        } catch (e) {
+          error = { error: 'Request failed' };
+          console.log('Failed to parse error response:', e);
+        }
+        
+        const errorMessage = error.error || error.message || error.detail || `HTTP ${res.status}: ${res.statusText}`;
+        throw new Error(errorMessage);
       }
-      const error = await res.json().catch(() => ({ error: 'Request failed' }));
-      const errorMessage = error.error || error.message || `HTTP ${res.status}: ${res.statusText}`;
-      throw new Error(`${errorMessage} (URL: ${API_BASE_URL}${endpoint})`);
-    }
 
-    return res.json();
+      return res.json();
+    } catch (error) {
+      console.error('Network error:', error);
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error('Network error: Unable to connect to the server. Please check your internet connection.');
+      }
+      throw error;
+    }
   },
 
   put: async <T>(endpoint: string, body: any): Promise<ApiResponse<T>> => {
@@ -113,9 +148,15 @@ export const apiClient = {
         handleAuthError();
         throw new Error('Authentication expired. Please login again.');
       }
+      if (res.status === 404) {
+        throw new Error('Resource not found. Please check the endpoint.');
+      }
+      if (res.status >= 500) {
+        throw new Error('Server error. Please try again later.');
+      }
       const error = await res.json().catch(() => ({ error: 'Request failed' }));
-      const errorMessage = error.error || error.message || `HTTP ${res.status}: ${res.statusText}`;
-      throw new Error(`${errorMessage} (URL: ${API_BASE_URL}${endpoint})`);
+      const errorMessage = error.error || error.message || error.detail || `HTTP ${res.status}: ${res.statusText}`;
+      throw new Error(errorMessage);
     }
 
     return res.json();
@@ -141,9 +182,15 @@ export const apiClient = {
         handleAuthError();
         throw new Error('Authentication expired. Please login again.');
       }
+      if (res.status === 404) {
+        throw new Error('Resource not found. Please check the endpoint.');
+      }
+      if (res.status >= 500) {
+        throw new Error('Server error. Please try again later.');
+      }
       const error = await res.json().catch(() => ({ error: 'Request failed' }));
-      const errorMessage = error.error || error.message || `HTTP ${res.status}: ${res.statusText}`;
-      throw new Error(`${errorMessage} (URL: ${API_BASE_URL}${endpoint})`);
+      const errorMessage = error.error || error.message || error.detail || `HTTP ${res.status}: ${res.statusText}`;
+      throw new Error(errorMessage);
     }
 
     return res.json();
@@ -168,9 +215,15 @@ export const apiClient = {
         handleAuthError();
         throw new Error('Authentication expired. Please login again.');
       }
+      if (res.status === 404) {
+        throw new Error('Resource not found. Please check the endpoint.');
+      }
+      if (res.status >= 500) {
+        throw new Error('Server error. Please try again later.');
+      }
       const error = await res.json().catch(() => ({ error: 'Request failed' }));
-      const errorMessage = error.error || error.message || `HTTP ${res.status}: ${res.statusText}`;
-      throw new Error(`${errorMessage} (URL: ${API_BASE_URL}${endpoint})`);
+      const errorMessage = error.error || error.message || error.detail || `HTTP ${res.status}: ${res.statusText}`;
+      throw new Error(errorMessage);
     }
 
     return res.json();

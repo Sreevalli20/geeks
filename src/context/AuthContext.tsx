@@ -31,7 +31,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setTokenState(storedToken);
       setAuthToken(storedToken);
       // Verify token by fetching current user
-      apiClient.get<User>('/api/auth/me/')
+      apiClient.get<User>('/api/auth/me')
         .then((response) => {
           setUser(response.data);
         })
@@ -50,16 +50,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async (email: string, password: string) => {
-    const response = await apiClient.post<{ user: User; token: string }>('/api/auth/login/', {
-      email,
-      password,
-    });
+    try {
+      const response = await apiClient.post<{ user: User; token: string }>('/api/auth/login', {
+        email,
+        password,
+      });
 
-    const { user: userData, token: newToken } = response.data;
-    setUser(userData);
-    setTokenState(newToken);
-    setAuthToken(newToken);
-    localStorage.setItem('skillproof_token', newToken);
+      const { user: userData, token: newToken } = response.data;
+      setUser(userData);
+      setTokenState(newToken);
+      setAuthToken(newToken);
+      localStorage.setItem('skillproof_token', newToken);
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
   };
 
   const register = async (
@@ -67,17 +72,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     password: string,
     role: 'CANDIDATE' | 'RECRUITER' | 'ADMIN' = 'RECRUITER'
   ) => {
-    const response = await apiClient.post<{ user: User; token: string }>('/api/auth/register/', {
-      email,
-      password,
-      role,
-    });
+    try {
+      const response = await apiClient.post<{ user: User; token: string }>('/api/auth/register', {
+        email,
+        password,
+        role,
+      });
 
-    const { user: userData, token: newToken } = response.data;
-    setUser(userData);
-    setTokenState(newToken);
-    setAuthToken(newToken);
-    localStorage.setItem('skillproof_token', newToken);
+      const { user: userData, token: newToken } = response.data;
+      setUser(userData);
+      setTokenState(newToken);
+      setAuthToken(newToken);
+      localStorage.setItem('skillproof_token', newToken);
+    } catch (error) {
+      console.error('Register error:', error);
+      throw error;
+    }
   };
 
   const logout = () => {
