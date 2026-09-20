@@ -1,6 +1,4 @@
 import pdf from 'pdf-parse';
-
-// @ts-ignore - mammoth doesn't have proper TypeScript definitions
 import mammoth from 'mammoth';
 
 export async function extractResumeText(file: Express.Multer.File): Promise<string> {

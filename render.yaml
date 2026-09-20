@@ -8,7 +8,7 @@ services:
     runtime: node
     plan: free
     buildCommand: npm install && npm run build
-    startCommand: node server/dist/server.js
+    startCommand: cd server && npm start
     envVars:
       - key: NODE_ENV
         value: production
