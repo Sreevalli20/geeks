@@ -1,7 +1,32 @@
 import { EvidenceItem, EvidenceCategory, Skill, Project } from '../types';
 import { detectCategoryFromFilename } from './uploads';
+import { apiClient } from './api';
 
 export const evidenceService = {
+  getByCandidate: async (candidateId: string): Promise<EvidenceItem[]> => {
+    const response = await apiClient.get<any>(`/api/evidence/candidate/${candidateId}`);
+    return response.data.evidence.map((e: any) => ({
+      id: e.id,
+      candidateId: e.candidate_id,
+      filename: e.filename,
+      source: e.source,
+      evidenceType: e.evidence_type,
+      fileSize: e.file_size,
+      fileType: e.file_type,
+      uploadedAt: e.uploaded_at,
+      relatedSkillIds: [],
+      relatedProjectIds: [],
+      status: e.status,
+      extractionSnippet: e.extraction_snippet,
+      rawContent: e.raw_content,
+      conflicts: e.conflicts,
+      missingInformation: e.missing_information,
+      humanReviewed: e.human_reviewed,
+      reviewerComment: e.reviewer_comment,
+      confidenceScore: e.confidence_score,
+    }));
+  },
+
   createFromUpload: (
     candidateId: string,
     file: File,

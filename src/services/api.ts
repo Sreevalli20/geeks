@@ -3,7 +3,7 @@
  * Connects to the SkillProof backend server for all data operations
  */
 
-const API_BASE_URL = (import.meta.env.VITE_API_URL as string) || 'http://localhost:3001';
+const API_BASE_URL = (import.meta.env.VITE_API_URL as string) || 'https://geeks2.onrender.com';
 
 export interface ApiResponse<T> {
   data: T;
@@ -15,6 +15,14 @@ export interface ApiResponse<T> {
 // Get stored auth token
 const getAuthToken = () => {
   return localStorage.getItem('skillproof_token');
+};
+
+// Handle 401 errors by clearing auth token
+const handleAuthError = () => {
+  clearAuthToken();
+  if (typeof window !== 'undefined') {
+    window.location.href = '/';
+  }
 };
 
 // Set auth token
@@ -38,13 +46,19 @@ export const apiClient = {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+    // Normalize endpoint to ensure trailing slash for backend compatibility
+    const normalizedEndpoint = endpoint.endsWith('/') ? endpoint : `${endpoint}/`;
+    const res = await fetch(`${API_BASE_URL}${normalizedEndpoint}`, {
       headers,
     });
 
     if (!res.ok) {
+      if (res.status === 401) {
+        handleAuthError();
+        throw new Error('Authentication expired. Please login again.');
+      }
       const error = await res.json().catch(() => ({ error: 'Request failed' }));
-      throw new Error(error.error || `HTTP ${res.status}: ${res.statusText}`);
+      throw new Error(error.error || error.message || `HTTP ${res.status}: ${res.statusText}`);
     }
 
     return res.json();
@@ -60,15 +74,20 @@ export const apiClient = {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const normalizedEndpoint = endpoint.endsWith('/') ? endpoint : `${endpoint}/`;
+    const res = await fetch(`${API_BASE_URL}${normalizedEndpoint}`, {
       method: 'POST',
       headers,
       body: JSON.stringify(body),
     });
 
     if (!res.ok) {
+      if (res.status === 401) {
+        handleAuthError();
+        throw new Error('Authentication expired. Please login again.');
+      }
       const error = await res.json().catch(() => ({ error: 'Request failed' }));
-      throw new Error(error.error || `HTTP ${res.status}: ${res.statusText}`);
+      throw new Error(error.error || error.message || `HTTP ${res.status}: ${res.statusText}`);
     }
 
     return res.json();
@@ -84,15 +103,20 @@ export const apiClient = {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const normalizedEndpoint = endpoint.endsWith('/') ? endpoint : `${endpoint}/`;
+    const res = await fetch(`${API_BASE_URL}${normalizedEndpoint}`, {
       method: 'PUT',
       headers,
       body: JSON.stringify(body),
     });
 
     if (!res.ok) {
+      if (res.status === 401) {
+        handleAuthError();
+        throw new Error('Authentication expired. Please login again.');
+      }
       const error = await res.json().catch(() => ({ error: 'Request failed' }));
-      throw new Error(error.error || `HTTP ${res.status}: ${res.statusText}`);
+      throw new Error(error.error || error.message || `HTTP ${res.status}: ${res.statusText}`);
     }
 
     return res.json();
@@ -108,14 +132,19 @@ export const apiClient = {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const normalizedEndpoint = endpoint.endsWith('/') ? endpoint : `${endpoint}/`;
+    const res = await fetch(`${API_BASE_URL}${normalizedEndpoint}`, {
       method: 'DELETE',
       headers,
     });
 
     if (!res.ok) {
+      if (res.status === 401) {
+        handleAuthError();
+        throw new Error('Authentication expired. Please login again.');
+      }
       const error = await res.json().catch(() => ({ error: 'Request failed' }));
-      throw new Error(error.error || `HTTP ${res.status}: ${res.statusText}`);
+      throw new Error(error.error || error.message || `HTTP ${res.status}: ${res.statusText}`);
     }
 
     return res.json();
@@ -129,15 +158,20 @@ export const apiClient = {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const normalizedEndpoint = endpoint.endsWith('/') ? endpoint : `${endpoint}/`;
+    const res = await fetch(`${API_BASE_URL}${normalizedEndpoint}`, {
       method: 'POST',
       headers,
       body: formData,
     });
 
     if (!res.ok) {
+      if (res.status === 401) {
+        handleAuthError();
+        throw new Error('Authentication expired. Please login again.');
+      }
       const error = await res.json().catch(() => ({ error: 'Request failed' }));
-      throw new Error(error.error || `HTTP ${res.status}: ${res.statusText}`);
+      throw new Error(error.error || error.message || `HTTP ${res.status}: ${res.statusText}`);
     }
 
     return res.json();

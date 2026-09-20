@@ -1,6 +1,26 @@
 import { Skill, EvidenceItem, EvidenceStrength } from '../types';
+import { apiClient } from './api';
 
 export const skillsService = {
+  getByCandidate: async (candidateId: string): Promise<Skill[]> => {
+    const response = await apiClient.get<any>(`/api/skills/candidate/${candidateId}`);
+    return response.data.skills.map((s: any) => ({
+      id: s.id,
+      candidateId: s.candidate_id,
+      name: s.name,
+      category: s.category,
+      resumeClaimLevel: s.resume_claim_level,
+      evidenceCount: s.evidence_count,
+      verificationState: s.verification_state,
+      evidenceStrength: s.evidence_strength,
+      missingProofReason: s.missing_proof_reason,
+      recommendedValidation: s.recommended_validation,
+      relatedProjectIds: [],
+      relatedEvidenceIds: [],
+      isProven: s.is_proven,
+    }));
+  },
+
   createSkillsFromExtracted: (
     candidateId: string,
     extractedSkills: { name: string; category: Skill['category']; level: string }[]

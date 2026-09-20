@@ -38,6 +38,7 @@ import { evidenceService } from '../services/evidence';
 import { challengesService, ALL_CHALLENGES } from '../services/challenges';
 import { verificationService } from '../services/verification';
 import { apiClient, setAuthToken, clearAuthToken } from '../services/api';
+import { useAuth } from './AuthContext';
 
 export type AppView =
   | 'overview'
@@ -114,23 +115,24 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { isAuthenticated } = useAuth();
   const [currentView, setCurrentView] = useState<AppView>('overview');
 
-  // Core entities
-  const [candidates, setCandidates] = useState<Candidate[]>([DEV_CANDIDATE]);
-  const [activeCandidateId, setActiveCandidateId] = useState<string>(DEV_CANDIDATE.id);
+  // Core entities - start empty and fetch from backend
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [activeCandidateId, setActiveCandidateId] = useState<string>('');
 
-  const [claims, setClaims] = useState<Claim[]>(DEV_CLAIMS);
-  const [skills, setSkills] = useState<Skill[]>(DEV_SKILLS);
-  const [projects, setProjects] = useState<Project[]>(DEV_PROJECTS);
-  const [experiences, setExperiences] = useState<Experience[]>(DEV_EXPERIENCES);
-  const [certificates, setCertificates] = useState<Certificate[]>(DEV_CERTIFICATES);
-  const [evidence, setEvidence] = useState<EvidenceItem[]>(DEV_EVIDENCE);
-  const [relationships, setRelationships] = useState<EvidenceRelationship[]>(DEV_RELATIONSHIPS);
+  const [claims, setClaims] = useState<Claim[]>([]);
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [experiences, setExperiences] = useState<Experience[]>([]);
+  const [certificates, setCertificates] = useState<Certificate[]>([]);
+  const [evidence, setEvidence] = useState<EvidenceItem[]>([]);
+  const [relationships, setRelationships] = useState<EvidenceRelationship[]>([]);
   const [challenges, setChallenges] = useState<PracticalChallenge[]>(ALL_CHALLENGES);
-  const [submissions, setSubmissions] = useState<ChallengeSubmission[]>(DEV_SUBMISSIONS);
-  const [assessments, setAssessments] = useState<Assessment[]>(DEV_ASSESSMENTS);
-  const [timeline, setTimeline] = useState<VerificationEvent[]>(DEV_TIMELINE);
+  const [submissions, setSubmissions] = useState<ChallengeSubmission[]>([]);
+  const [assessments, setAssessments] = useState<Assessment[]>([]);
+  const [timeline, setTimeline] = useState<VerificationEvent[]>([]);
   const [importJobs, setImportJobs] = useState<ImportJob[]>([]);
 
   // UI state
@@ -143,6 +145,47 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [previewEvidence, setPreviewEvidence] = useState<EvidenceItem | null>(null);
 
   const activeCandidate = candidates.find((c) => c.id === activeCandidateId) || candidates[0] || null;
+
+  // Load candidates from backend when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadCandidatesFromBackend();
+    }
+  }, [isAuthenticated]);
+
+  const loadCandidatesFromBackend = async () => {
+    try {
+      const fetchedCandidates = await candidatesService.getAll();
+      setCandidates(fetchedCandidates);
+      if (fetchedCandidates.length > 0 && !activeCandidateId) {
+        setActiveCandidateId(fetchedCandidates[0].id);
+      }
+    } catch (error) {
+      console.error('Failed to load candidates:', error);
+    }
+  };
+
+  // Load candidate-specific data when active candidate changes
+  useEffect(() => {
+    if (activeCandidateId && isAuthenticated) {
+      loadCandidateData(activeCandidateId);
+    }
+  }, [activeCandidateId, isAuthenticated]);
+
+  const loadCandidateData = async (candidateId: string) => {
+    try {
+      const [fetchedSkills, fetchedClaims, fetchedEvidence] = await Promise.all([
+        skillsService.getByCandidate(candidateId),
+        claimsService.getByCandidate(candidateId),
+        evidenceService.getByCandidate(candidateId),
+      ]);
+      setSkills(fetchedSkills);
+      setClaims(fetchedClaims);
+      setEvidence(fetchedEvidence);
+    } catch (error) {
+      console.error('Failed to load candidate data:', error);
+    }
+  };
 
   const navigateTo = (view: AppView) => {
     setCurrentView(view);
@@ -205,28 +248,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       // Upload to backend
       const result = await uploadEvidenceToBackend(files, candidateId);
 
-      // Refresh evidence list
-      // This would require implementing evidenceService.getAll
-      // For now, add the new evidence to local state
-      const newEvidenceItems: EvidenceItem[] = result.map((ev: any) => ({
-        id: ev.id,
-        candidateId: ev.candidate_id,
-        filename: ev.filename,
-        source: ev.source,
-        evidenceType: ev.evidence_type,
-        fileSize: ev.file_size,
-        fileType: ev.file_type,
-        uploadedAt: ev.uploaded_at,
-        relatedSkillIds: [],
-        relatedProjectIds: [],
-        status: ev.status,
-        extractionSnippet: ev.extraction_snippet,
-        rawContent: ev.raw_content,
-        humanReviewed: ev.human_reviewed,
-        confidenceScore: ev.confidence_score,
-      }));
-
-      setEvidence((prev) => [...newEvidenceItems, ...prev]);
+      // Refresh evidence list from backend
+      const fetchedEvidence = await evidenceService.getByCandidate(candidateId);
+      setEvidence(fetchedEvidence);
 
       setIsProcessingUpload(false);
     } catch (err: any) {
@@ -447,6 +471,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const resetToDevelopmentData = () => {
+    // Only for development - load dev data
     setCandidates([DEV_CANDIDATE]);
     setActiveCandidateId(DEV_CANDIDATE.id);
     setClaims(DEV_CLAIMS);

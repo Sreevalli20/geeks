@@ -1,6 +1,26 @@
 import { Claim } from '../types';
+import { apiClient } from './api';
 
 export const claimsService = {
+  getByCandidate: async (candidateId: string): Promise<Claim[]> => {
+    const response = await apiClient.get<any>(`/api/claims/candidate/${candidateId}`);
+    return response.data.claims.map((c: any) => ({
+      id: c.id,
+      candidateId: c.candidate_id,
+      title: c.title,
+      claimType: c.claim_type,
+      source: c.source,
+      description: c.description,
+      declaredLevel: c.declared_level,
+      evidenceStatus: c.evidence_status,
+      evidenceIds: [],
+      reviewerNotes: c.reviewer_notes,
+      reviewedByHuman: c.reviewed_by_human,
+      reviewedAt: c.reviewed_at,
+      createdAt: c.created_at,
+    }));
+  },
+
   createFromSkillsAndProjects: (
     candidateId: string,
     skills: { name: string; level?: string }[],

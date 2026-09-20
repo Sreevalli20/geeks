@@ -9,7 +9,33 @@ export const candidatesService = {
 
   getById: async (id: string): Promise<Candidate> => {
     const response = await apiClient.get<any>(`/api/candidates/${id}`);
-    return response.data.candidate;
+    const backendCandidate = response.data.candidate;
+    
+    // Transform backend data to frontend format
+    return {
+      id: backendCandidate.id,
+      name: backendCandidate.name,
+      email: backendCandidate.email,
+      phone: backendCandidate.phone,
+      location: backendCandidate.location,
+      detectedRole: backendCandidate.detected_role,
+      targetRole: backendCandidate.target_role,
+      summary: backendCandidate.summary,
+      education: backendCandidate.education_degree ? {
+        degree: backendCandidate.education_degree,
+        institution: backendCandidate.education_institution,
+        graduationYear: backendCandidate.education_graduation_year,
+      } : undefined,
+      keySkills: [], // Will be populated from skills endpoint
+      links: {
+        github: backendCandidate.github_url,
+        linkedin: backendCandidate.linkedin_url,
+        portfolio: backendCandidate.portfolio_url,
+      },
+      isDevelopmentData: backendCandidate.is_development_data,
+      createdAt: backendCandidate.created_at,
+      updatedAt: backendCandidate.updated_at,
+    };
   },
 
   create: async (data: Partial<Candidate>): Promise<Candidate> => {
