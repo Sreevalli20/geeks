@@ -108,7 +108,7 @@ export async function uploadResumeToBackend(file: File, candidateId?: string): P
     formData.append('candidate_id', candidateId);
   }
 
-  const response = await apiClient.upload('/api/uploads/resume', formData);
+  const response = await apiClient.upload('/api/uploads/resume/', formData);
   return response.data;
 }
 
@@ -120,7 +120,7 @@ export async function uploadEvidenceToBackend(files: File[], candidateId: string
   });
   formData.append('candidate_id', candidateId);
 
-  const response = await apiClient.upload('/api/uploads/evidence', formData);
+  const response = await apiClient.upload('/api/uploads/evidence/', formData);
   return response.data;
 }
 

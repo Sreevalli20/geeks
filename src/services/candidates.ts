@@ -3,12 +3,12 @@ import { apiClient } from './api';
 
 export const candidatesService = {
   getAll: async (): Promise<Candidate[]> => {
-    const response = await apiClient.get<any>('/api/candidates');
+    const response = await apiClient.get<any>('/api/candidates/');
     return response.data.candidates || [];
   },
 
   getById: async (id: string): Promise<Candidate> => {
-    const response = await apiClient.get<any>(`/api/candidates/${id}`);
+    const response = await apiClient.get<any>(`/api/candidates/${id}/`);
     const backendCandidate = response.data.candidate;
     
     // Transform backend data to frontend format
@@ -39,17 +39,17 @@ export const candidatesService = {
   },
 
   create: async (data: Partial<Candidate>): Promise<Candidate> => {
-    const response = await apiClient.post<any>('/api/candidates', data);
+    const response = await apiClient.post<any>('/api/candidates/', data);
     return response.data.candidate;
   },
 
   update: async (id: string, data: Partial<Candidate>): Promise<Candidate> => {
-    const response = await apiClient.put<any>(`/api/candidates/${id}`, data);
+    const response = await apiClient.put<any>(`/api/candidates/${id}/`, data);
     return response.data.candidate;
   },
 
   delete: async (id: string): Promise<void> => {
-    await apiClient.delete(`/api/candidates/${id}`);
+    await apiClient.delete(`/api/candidates/${id}/`);
   },
 
   // Legacy method for compatibility with existing frontend code

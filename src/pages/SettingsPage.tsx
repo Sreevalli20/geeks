@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Settings,
   Database,
@@ -7,8 +7,10 @@ import {
   ShieldCheck,
   CheckCircle2,
   AlertTriangle,
+  XCircle,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { apiClient } from '../services/api';
 
 export const SettingsPage: React.FC = () => {
   const {
@@ -21,6 +23,24 @@ export const SettingsPage: React.FC = () => {
 
   const [confirmClear, setConfirmClear] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [apiStatus, setApiStatus] = useState<'checking' | 'connected' | 'failed'>('checking');
+  const [apiError, setApiError] = useState<string | null>(null);
+
+  useEffect(() => {
+    checkApiHealth();
+  }, []);
+
+  const checkApiHealth = async () => {
+    setApiStatus('checking');
+    setApiError(null);
+    try {
+      await apiClient.get('/api/health/');
+      setApiStatus('connected');
+    } catch (error) {
+      setApiStatus('failed');
+      setApiError(error instanceof Error ? error.message : 'API connection failed');
+    }
+  };
 
   const handleClearAll = () => {
     clearAllData();
@@ -99,6 +119,44 @@ export const SettingsPage: React.FC = () => {
           <p className="text-slate-600 leading-relaxed">
             All services in <code className="text-slate-800 font-mono">/src/services/api.ts</code> are wired to seamlessly switch to network calls whenever <code className="text-slate-800 font-mono">VITE_API_URL</code> is defined in the environment.
           </p>
+        </div>
+
+        {/* SkillProof API Test */}
+        <div className="p-3.5 bg-slate-50 rounded-lg border border-slate-200 text-xs space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="font-semibold text-slate-700">SkillProof API Test</span>
+            <button
+              onClick={checkApiHealth}
+              disabled={apiStatus === 'checking'}
+              className="px-2 py-1 rounded bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium disabled:opacity-50"
+            >
+              {apiStatus === 'checking' ? 'Testing...' : 'Test Connection'}
+            </button>
+          </div>
+
+          {apiStatus === 'connected' && (
+            <div className="flex items-center gap-2 text-emerald-700">
+              <CheckCircle2 className="w-4 h-4" />
+              <span className="font-medium">API Connection: PASS</span>
+            </div>
+          )}
+
+          {apiStatus === 'failed' && (
+            <div className="flex items-start gap-2 text-rose-700">
+              <XCircle className="w-4 h-4 shrink-0 mt-0.5" />
+              <div>
+                <span className="font-medium">API Connection: FAIL</span>
+                {apiError && <p className="text-[11px] mt-1">{apiError}</p>}
+              </div>
+            </div>
+          )}
+
+          {apiStatus === 'checking' && (
+            <div className="flex items-center gap-2 text-slate-600">
+              <AlertTriangle className="w-4 h-4" />
+              <span>Testing API connection...</span>
+            </div>
+          )}
         </div>
       </div>
 

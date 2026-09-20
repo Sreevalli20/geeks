@@ -3,7 +3,7 @@ import { apiClient } from './api';
 
 export const skillsService = {
   getByCandidate: async (candidateId: string): Promise<Skill[]> => {
-    const response = await apiClient.get<any>(`/api/skills/candidate/${candidateId}`);
+    const response = await apiClient.get<any>(`/api/skills/candidate/${candidateId}/`);
     return response.data.skills.map((s: any) => ({
       id: s.id,
       candidateId: s.candidate_id,

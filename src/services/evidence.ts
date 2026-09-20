@@ -4,7 +4,7 @@ import { apiClient } from './api';
 
 export const evidenceService = {
   getByCandidate: async (candidateId: string): Promise<EvidenceItem[]> => {
-    const response = await apiClient.get<any>(`/api/evidence/candidate/${candidateId}`);
+    const response = await apiClient.get<any>(`/api/evidence/candidate/${candidateId}/`);
     return response.data.evidence.map((e: any) => ({
       id: e.id,
       candidateId: e.candidate_id,

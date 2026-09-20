@@ -3,7 +3,7 @@ import { apiClient } from './api';
 
 export const claimsService = {
   getByCandidate: async (candidateId: string): Promise<Claim[]> => {
-    const response = await apiClient.get<any>(`/api/claims/candidate/${candidateId}`);
+    const response = await apiClient.get<any>(`/api/claims/candidate/${candidateId}/`);
     return response.data.claims.map((c: any) => ({
       id: c.id,
       candidateId: c.candidate_id,
