@@ -70,8 +70,8 @@ router.post('/analyze', authenticate, async (req: AuthRequest, res, next) => {
     const evidenceResult = await query(
       `INSERT INTO evidence (
         candidate_id, filename, source, evidence_type, file_size, file_type,
-        extraction_snippet, raw_content, status, confidence_score
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        storage_path, extraction_snippet, raw_content, status, confidence_score
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
       RETURNING *`,
       [
         candidate_id,
@@ -80,6 +80,7 @@ router.post('/analyze', authenticate, async (req: AuthRequest, res, next) => {
         'Source Code',
         size,
         'application/json',
+        null,
         `GitHub repository: ${owner}/${repo}. Languages: ${languages.join(', ')}. Stars: ${stargazers}, Forks: ${forks}`,
         JSON.stringify({
           name: repoData.full_name,
@@ -94,7 +95,7 @@ router.post('/analyze', authenticate, async (req: AuthRequest, res, next) => {
         'SUPPORTED',
         95
       ]
-    ];
+    );
 
     // Update candidate's GitHub URL if not set
     await query(
